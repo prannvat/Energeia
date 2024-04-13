@@ -46,7 +46,7 @@ def send_ether(destination_address, amount_in_ether):
         'gas': 2000000,
         'gasPrice': w3.toWei('50', 'gwei'),
         'nonce': nonce,
-        'chainId': 1  # replace with your sidechain's chain ID
+        'chainId': 1440002  # replace with your sidechain's chain ID
     }
     signed_transaction = w3.eth.account.signTransaction(transaction, account.privateKey)
     tx_hash = w3.eth.sendRawTransaction(signed_transaction.rawTransaction)
