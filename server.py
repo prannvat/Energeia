@@ -1,20 +1,13 @@
 from flask import Flask, request, jsonify
-from flask import Flask, request, jsonify
-from xrpl.wallet import Wallet
-from xrpl.models.transactions import Payment
-from xrpl.models.amounts import XRPAmount
-from xrpl.clients import JsonRpcClient
-from xrpl.transaction import send_reliable_submission
-from xrpl.models.requests.account_info import AccountInfo
-from xrpl.wallet import Wallet
-from xrpl.wallet import generate_faucet_wallet
+
+from Components.mod1 import get_account, get_account_info
+import requests
 
 import requests
 
 app = Flask(__name__)
 
-JSON_RPC_URL = "https://s.altnet.rippletest.net:51234/"
-client = JsonRpcClient(JSON_RPC_URL)
+
 
 @app.route('/get_standby_account', methods=['POST'])
 def get_standby_account():
@@ -33,22 +26,22 @@ def get_standby_info(standby_seed):
     accountInfo = get_account_info(standby_seed)
     return jsonify(accountInfo)
 
-@app.route('/send_xrp/<seed>/<amount>/<destination>', methods=['POST'])
-def send_xrp(seed, amount, destination):
-    # Create a wallet from the seed
-    wallet = Wallet(seed, 0)
+# @app.route('/send_xrp/<seed>/<amount>/<destination>', methods=['POST'])
+# def send_xrp(seed, amount, destination):
+#     # Create a wallet from the seed
+#     wallet = Wallet(seed, 0)
 
-    # Define the payment
-    payment = Payment(
-        account=wallet.classic_address,
-        amount=XRPAmount(amount),
-        destination=destination,
-    )
+#     # Define the payment
+#     payment = Payment(
+#         account=wallet.classic_address,
+#         amount=XRPAmount(amount),
+#         destination=destination,
+#     )
 
-    # Send the payment
-    response = send_reliable_submission(client, payment, wallet)
+#     # Send the payment
+#     response = send_reliable_submission(client, payment, wallet)
 
-    return jsonify(response.result)
+#     return jsonify(response.result)
 
 
 
