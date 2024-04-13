@@ -19,7 +19,12 @@ def get_account_info(accountId):
         ledger_index="validated"
     )
     response = client.request(acct_info)
-    return response.result['account_data']
+    result = response.result
+    if 'account_data' in result:
+        account_data = result['account_data']
+    else:
+        account_data = "No account data found"
+    return account_data
 
 def send_xrp(seed, amount, destination):
     sending_wallet = xrpl.wallet.Wallet.from_seed(seed)
