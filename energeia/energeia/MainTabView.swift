@@ -4,9 +4,7 @@
 //
 //  Created by Prannvat Singh on 13/04/2024.
 //
-from xrpl.clients import JsonRpcClient
-mainnet_client = JsonRpcClient("https://s2.ripple.com:51234/")
-import SwiftUI
+
 
 let appGreen = Color(red: 88/255, green:148/255, blue:138/255)
 struct MainTabView: View {
