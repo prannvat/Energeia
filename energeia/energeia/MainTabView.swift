@@ -5,6 +5,20 @@
 //  Created by Prannvat Singh on 13/04/2024.
 //
 
+import UIKit
+import SafariServices
+
+struct SafariView: UIViewControllerRepresentable {
+    let url: URL
+    
+    func makeUIViewController(context: UIViewControllerRepresentableContext<SafariView>) -> SFSafariViewController {
+        return SFSafariViewController(url: url)
+    }
+    
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: UIViewControllerRepresentableContext<SafariView>) {
+        // No update needed
+    }
+}
 
 let appGreen = Color(red: 88/255, green:148/255, blue:138/255)
 struct MainTabView: View {
@@ -35,10 +49,15 @@ struct MainTabView: View {
                     Label("Profile", systemImage: "person.crop.circle")
                 }
         }
+        .onAppear{
+            UITabBar.appearance().backgroundColor = UIColor(appGreen)
+        }
+        .tint(.white)
     }
 }
 
 struct GreenFinanceView: View {
+    @State private var balance: String = ""
     // Example properties, replace with actual data and logic
     var body: some View {
         NavigationView {
@@ -46,43 +65,42 @@ struct GreenFinanceView: View {
                 Image("AppLogo")
                     .resizable()
                     .scaledToFit()
-                    .cornerRadius(20)
+                    .cornerRadius(10)
                     .frame(width: UIScreen.main.bounds.width * 0.9, height: UIScreen.main.bounds.height * 0.15)
-                
                     .shadow(radius: 40)
                 Section(header: Text("Portfolio").fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)){
-                    Rectangle()
-                        .foregroundColor(appGreen)
+                    LinearGradient(colors: [appGreen.opacity(0.6), appGreen], startPoint: .top, endPoint: .bottom)
                         .frame(width: UIScreen.main.bounds.width * 0.9, height: UIScreen.main.bounds.height * 0.1)
-                        .cornerRadius(20)
+                        .cornerRadius(10)
                         .shadow(radius: 40)
                         .overlay(
-                           
-                                HStack
-                                {
-                                   Text("236.952 XRP")
-                                        .font(.title)
-                                        .padding()
-                                    
-                                    Text("Up 7% .last 24 hrs")
-                                        .foregroundStyle(appGreen)
-                                         .font(.headline)
-                                         .multilineTextAlignment(.center)
-                                         .padding()
-                                    
-                                         .background().cornerRadius(2400)
-                                    
-                                }
+                            
+                            HStack
+                            {
+                                Text("\(balance) XRP")
+                                    .foregroundStyle(.white)
+                                    .multilineTextAlignment(.center)
+                                    .font(.title)
+                                    .padding()
+                                
+                                Text("**^** 7% .24 hrs")
+                                    .foregroundStyle(appGreen)
+                                    .font(.headline)
+                                    .multilineTextAlignment(.center)
+                                    .padding(6)
+                                
+                                    .background().cornerRadius(2400)
+                                
+                            }
                             
                                 .frame(width: UIScreen.main.bounds.width * 0.9, height: UIScreen.main.bounds.height * 0.2)
-                                .cornerRadius(20)
+                                .cornerRadius(10)
                         )
                 }
                 
-                Rectangle()
-                    .foregroundColor(appGreen)
+                LinearGradient(colors: [appGreen.opacity(0.6), appGreen], startPoint: .top, endPoint: .bottom)
                     .frame(width: UIScreen.main.bounds.width * 0.9, height: UIScreen.main.bounds.height * 0.2)
-                    .cornerRadius(20)
+                    .cornerRadius(10)
                     .shadow(radius: 40)
                     .overlay(
                         ScrollView(.vertical, showsIndicators: true) {
@@ -93,55 +111,109 @@ struct GreenFinanceView: View {
                                 .padding()
                         }
                             .frame(width: UIScreen.main.bounds.width * 0.9, height: UIScreen.main.bounds.height * 0.2)
-                            .cornerRadius(20)
+                            .cornerRadius(10)
                     ).padding()
                 
-               
+                
                 Section(header: Text("Weeks Top Investment Choices").fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)){
-                    Rectangle()
-                        .foregroundColor(appGreen)
+                    LinearGradient(colors: [appGreen.opacity(0.6), appGreen], startPoint: .top, endPoint: .bottom)
                         .frame(width: UIScreen.main.bounds.width * 0.9, height: UIScreen.main.bounds.height * 0.2)
-                        .cornerRadius(20)
+                        .cornerRadius(10)
                         .shadow(radius: 40)
                         .overlay(
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack
                                 {
-                                    ForEach(0 ..< 10) { item in
-                                        Rectangle()
-                                            .foregroundStyle(.white)
-                                            .frame(width: UIScreen.main.bounds.width * 0.3, height: UIScreen.main.bounds.height * 0.15)
-                                            .cornerRadius(20)
-                                            .overlay{
-                                                Image(systemName: "dollarsign.arrow.circlepath")
-                                                    .font(.system(size: 35))
-                                            }
-                                        
+                                    ForEach(1 ..< 6) { item in
+                                        Image("Image \(String(item))")
+                                            .resizable()
+                                            .frame(width: UIScreen.main.bounds.width * 0.25, height: UIScreen.main.bounds.width * 0.25)
+                                            .cornerRadius(10)
                                     }
+                                    ForEach(1 ..< 6) { item in
+                                        Image("Image \(String(item))")
+                                            .resizable()
+                                            .frame(width: UIScreen.main.bounds.width * 0.25, height: UIScreen.main.bounds.width * 0.25)
+                                            .cornerRadius(10)
+                                    }
+                                    
+                                    
                                 }
                             }
                                 .frame(width: UIScreen.main.bounds.width * 0.9, height: UIScreen.main.bounds.height * 0.2)
-                                .cornerRadius(20)
+                                .cornerRadius(10)
                         )
                     
                     
                 }
                 Spacer()
-               
+                
+            }
+            .onAppear{
+                getBalance(for: "0x697FF21B2e1b66E2b35A8f336B3CBcF9E5256ebe")
+                print(balance)
             }
             
         }
+        
     }
+    
+    func getBalance(for address: String) {
+        guard let url = URL(string: "http://127.0.0.1:5000/get_balance/\(address)") else {
+            print("Invalid URL")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            // Check for and log any errors
+            if let error = error {
+                print("Network request error: \(error)")
+                return
+            }
+            
+            // Check the response code and log if it's not 200 OK
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                print("HTTP Error: Status code \(httpResponse.statusCode)")
+                return
+            }
+            
+            // Ensure data is not nil
+            guard let data = data else {
+                print("No data received")
+                return
+            }
+            
+            // Attempt to decode the JSON response
+            do {
+                let decodedResponse = try JSONDecoder().decode(BalanceResponse.self, from: data)
+                DispatchQueue.main.async {
+                    self.balance = "\(decodedResponse.balance)"
+                }
+            } catch {
+                print("JSON Decoding Error: \(error)")
+            }
+        }.resume()
+    }
+}
+struct BalanceResponse: Codable {
+    var address: String
+    var balance: String
 }
 
 
 struct CarbonCreditMarketplaceView: View {
-    // Example properties, replace with actual data and logic
+    @State private var showAlert: Bool = true
+    @State private var balance: String = ""
     var body: some View {
         NavigationView {
             VStack {
                 
-                
+                Text("Carbon Credit Market")
+                    .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                    .foregroundStyle(appGreen)
                 ScrollView(.vertical, showsIndicators: false) {
                     ForEach(0..<10) { item in
                         Rectangle()
@@ -160,25 +232,59 @@ struct CarbonCreditMarketplaceView: View {
                                             .foregroundColor(.white)
                                     }
                                     Spacer()
-                                    Button(action: {
-                                        // Action for buying or selling credits
-                                    }) {
+                                    Button {
+                                        showAlert = true
+                                    } label: {
                                         Text("Trade")
-                                            .foregroundColor(.white)
+                                            .foregroundColor(appGreen)
                                             .padding()
-                                            .background(RoundedRectangle(cornerRadius: 10).fill(Color.blue))
+                                            .background(RoundedRectangle(cornerRadius: 10).fill(Color.white))
                                     }
                                 }
-                                .padding()
+                                    .padding()
                             )
                             .padding(.bottom)
                     }
                 }
+                .scrollContentBackground(.hidden)
+                .alert(isPresented: $showAlert) {
+                    Alert(
+                        title: Text("Invest 100 XRP in this credit"),
+                        message: Text("Take your step into green finance!"),
+                        primaryButton: .default(Text("Invest")) {
+                            sendEther()
+                        },
+                        secondaryButton: .cancel(Text("Cancel"))
+                    )
+                }
                 Spacer()
             }
-            .navigationTitle("Carbon Credit Market")
+            .padding()
+            
+            
         }
     }
+    
+    func sendEther() {
+        guard let url = URL(string: "http://127.0.0.1:5000/send_ether") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST" // Your Flask route might be a GET or POST, adjust accordingly
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Error: \(error)")
+                return
+            }
+            
+            // Handle the response here. For simplicity, we're just printing it.
+            if let data = data, let dataString = String(data: data, encoding: .utf8) {
+                print("Response data string:\n \(dataString)")
+            }
+        }.resume()
+    }
+    
+    
 }
 
 struct RenewableProject: Identifiable {
@@ -189,6 +295,7 @@ struct RenewableProject: Identifiable {
 }
 
 struct SustainableProjectsView: View {
+    @State private var showAlert: Bool = false
     // Example array of projects, replace with actual data
     var projects: [RenewableProject] = [
         // Populate with actual projects
@@ -206,9 +313,9 @@ struct SustainableProjectsView: View {
                     Text(project.description)
                         .font(.subheadline)
                         .foregroundColor(.white)
-                    Button(action: {
-                        // Action to support or invest in the project
-                    }) {
+                    Button {
+                        showAlert = true
+                    }label: {
                         Text("Support")
                             .foregroundColor(.white)
                             .padding()
@@ -220,6 +327,13 @@ struct SustainableProjectsView: View {
                 .background(appGreen)
                 .cornerRadius(20)
                 .shadow(radius: 10)
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Help and be a part of sustainable projects"),
+                    message: Text("Donate to an amazing project."),
+                    dismissButton: .default(Text("Yayy!! Excited for Energeia to take over!"))
+                )
             }
             .navigationTitle("Sustainable Projects")
             .listStyle(PlainListStyle())
@@ -238,11 +352,13 @@ struct InvestmentOpportunity: Identifiable {
 }
 
 struct InvestmentOpportunitiesView: View {
+    @State private var showAlert: Bool = false
     // Example array of opportunities, replace with actual data
     var opportunities: [InvestmentOpportunity] = [
         // Populate with actual opportunities
         InvestmentOpportunity(name: "Solar Power Expansion", description: "Expanding solar power to remote areas.", investmentNeeded: "$150,000"),
-        InvestmentOpportunity(name: "Eco-Friendly Packaging", description: "Innovative packaging solutions that are 100% biodegradable.", investmentNeeded: "$50,000")
+        InvestmentOpportunity(name: "Eco-Friendly Packaging", description: "Innovative packaging solutions that are 100% biodegradable.", investmentNeeded: "$50,000"),
+        InvestmentOpportunity(name: "Wind Turbine generated business", description: "Completeley net zero carbon emissions.", investmentNeeded: "$100,000")
     ]
     
     var body: some View {
@@ -260,9 +376,9 @@ struct InvestmentOpportunitiesView: View {
                             Text("Investment Needed: \(opportunity.investmentNeeded)")
                                 .font(.subheadline)
                                 .foregroundColor(.yellow)
-                            Button(action: {
-                                // Action to explore or invest in the opportunity
-                            }) {
+                            Button {
+                                showAlert = true
+                            }label: {
                                 Text("Explore")
                                     .foregroundColor(.white)
                                     .padding()
@@ -276,6 +392,13 @@ struct InvestmentOpportunitiesView: View {
                         .shadow(radius: 10)
                         .padding(.bottom)
                     }
+                }
+                .alert(isPresented: $showAlert) {
+                    Alert(
+                        title: Text("Invest in amazing companies"),
+                        message: Text("Make money by investing in SME's."),
+                        dismissButton: .default(Text("Yayy!! Excited for Energeia to take over!"))
+                    )
                 }
                 .padding()
                 .navigationTitle("Investment Opportunities")

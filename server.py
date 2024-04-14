@@ -12,18 +12,18 @@ app = Flask(__name__)
 
 
 
-@app.route('/get_standby_account', methods=['POST'])
-def get_standby_account():
-    seed = request.json['seed']
-    new_wallet = get_account(seed)
-    return jsonify(classic_address=new_wallet.classic_address, seed=new_wallet.seed)
+# @app.route('/get_standby_account', methods=['POST'])
+# def get_standby_account():
+#     seed = request.json['seed']
+#     new_wallet = get_account(seed)
+#     return jsonify(classic_address=new_wallet.classic_address, seed=new_wallet.seed)
 
-@app.route('/get_standby_info')
-def get_standby_info():
-    standby_address = '0x8c092962c808a774FEA973C54b907e5396A7e509'  # replace with your standby address
-    balance = w3.eth.get_balance(standby_address)
-    balance_in_ether = Web3.from_wei(balance, 'ether')
-    return jsonify({'address': standby_address, 'balance': balance_in_ether})
+# @app.route('/get_standby_info')
+# def get_standby_info():
+#     standby_address = '0x8c092962c808a774FEA973C54b907e5396A7e509'  # replace with your standby address
+#     balance = w3.eth.get_balance(standby_address)
+#     balance_in_ether = Web3.from_wei(balance, 'ether')
+#     return jsonify({'address': standby_address, 'balance': balance_in_ether})
 
 
 # @app.route('/get_seed_info/<standby_seed>', methods=['GET'])
@@ -74,11 +74,22 @@ def get_standby_info():
 #         'balance': balance
 #     })
 
-@app.route('/send_ether')
+@app.route('/get_balance/<address>', methods=['GET'])
+def get_balance(address):
+    w3 = Web3(Web3.HTTPProvider('https://rpc-evm-sidechain.xrpl.org'))  # replace with your sidechain's RPC URL
+    balance = w3.eth.get_balance(address)
+    balance_in_ether = w3.from_wei(balance, 'ether')
+    return jsonify({'address': address, 'balance': balance_in_ether})
+
+
+@app.route('/send_ether', methods=['POST'])
 def send_ether():
-    private_key = '4de58f3be2a7ea96e92220b1693328329321fe2348c23c29ec92737d30baae40'  # replace with your actual private key
-    destination_address = '0x8c092962c808a774FEA973C54b907e5396A7e509'  # replace with the actual destination address
-    amount_in_ether = 1000  # replace with the actual amount
+    # private_key = 'e06230b93ab4d91411ea61e07be1a7f46af712102ce61a5adef7a0f25877ad14' 
+     # replace with your actual private key
+    private_key = 'c3bc734c9b6de94c33910553a79250228e32ace0f9aaabdbf79b7b09bfc0b13a'
+    # destination_address = '0x697FF21B2e1b66E2b35A8f336B3CBcF9E5256ebe'  # replace with the actual destination address
+    destination_address = '0x8c092962c808a774FEA973C54b907e5396A7e509'
+    amount_in_ether = 100 # replace with the actual amount
 
     w3 = Web3(Web3.HTTPProvider('https://rpc-evm-sidechain.xrpl.org'))  # replace with your sidechain's RPC URL
     account = Account.from_key(private_key)
