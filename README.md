@@ -1,2 +1,2 @@
 # Energeia
-Decentralised way to revolutionise the energy trading market
+Decentralised way to revolutionise the energy trading market.
